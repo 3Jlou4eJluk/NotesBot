@@ -20,3 +20,5 @@
 
 
 ## Демонстрация работы
+
+![изображение](https://github.com/3Jlou4eJluk/NotesBot/assets/52838612/6a4d76d6-e35a-49cd-8507-48b14755b6b6)
