@@ -24,4 +24,5 @@
 ![изображение](https://github.com/3Jlou4eJluk/NotesBot/assets/52838612/6a4d76d6-e35a-49cd-8507-48b14755b6b6)
 
 Нажатие на "добавить заметку":
+
 ![Снимок экрана от 2023-08-22 20-40-58](https://github.com/3Jlou4eJluk/NotesBot/assets/52838612/dbfbed80-bcc5-4e95-8a4a-60d6bbc28e47)
