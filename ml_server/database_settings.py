@@ -1,0 +1,1 @@
+DATE_FORMAT = "Date: %Y-%h-%d / Time: %H:%M:%S"
