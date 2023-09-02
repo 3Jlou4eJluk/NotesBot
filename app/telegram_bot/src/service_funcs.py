@@ -74,3 +74,10 @@ async def process_error(message: types.Message, state: FSMContext):
     await state.clear()
     await message.answer("Возникла ошибка")
 
+async def send_delete_db_request():
+    async with aiohttp.ClientSession() as session:
+        response = await session.get(ml_api_link + '/' + 'erase_db')
+        resp_status = response.status
+    await session.close()
+
+    return resp_status

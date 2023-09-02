@@ -191,3 +191,20 @@ class DataBase:
                 res_list.append(sorted_data.iloc[i]['note_id'])
         
         return res_list
+    
+    def erase_db(self):
+        self.embeddings_df = pd.DataFrame(data=None, columns=['note_name', 
+                                                              'note_text',
+                                                              'note_id',
+                                                              'date_create',
+                                                              'note_embedding'])
+        self.link_df = pd.DataFrame(data=None, columns=['link_id', 'first_id', 'second_id'])
+        self.model = SentenceTransformer(ml_server_settings.SENTENCE_TRANSFORMERS_MODEL)
+
+        self.last_id = 0
+        self.last_link_id = 0
+
+        self.reducer = umap.UMAP(n_components=ml_server_settings.TSNE_PERPLEXITY, metric='cosine')
+        self.reduced_repr = None
+        self.auto_sync_flag = True
+        self.low_dim_repr_df = None

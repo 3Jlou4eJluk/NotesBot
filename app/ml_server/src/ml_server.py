@@ -182,3 +182,8 @@ async def get_status():
     global db_obj
     res = {}
     return res
+
+@ml_api.get('ml_api/erase_db')
+async def erase_db():
+    global db_obj
+    
