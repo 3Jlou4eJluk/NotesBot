@@ -21,3 +21,4 @@ class AdministratorFilter(Filter):
         filter_result = message.from_user.id in self.admin_list
         if not filter_result:
             await message.answer('Нет доступа, данная команда доступна только администратору.')
+        return filter_result
