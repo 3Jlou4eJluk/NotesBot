@@ -16,6 +16,8 @@ from service_funcs import get_note_by_id
 from service_funcs import create_link
 from service_funcs import process_error
 
+from filters.authorization_filter import AuthorisationFilter
+
 
 class LinkNote(StatesGroup):
     choose_note = State()
@@ -25,12 +27,12 @@ class LinkNote(StatesGroup):
 
 link_note_router = Router()
 
-@link_note_router.message(F.text.regexp(r'Связать заметку'), State(None))
+@link_note_router.message(F.text.regexp(r'Связать заметку'), State(None), AuthorisationFilter())
 async def link_note_command(message: Message, state: FSMContext):
     await message.reply('А теперь введите имя заметки, которую хотите связать')
     await state.set_state(LinkNote.choose_note)
 
-@link_note_router.message(F.text, LinkNote.choose_note)
+@link_note_router.message(F.text, LinkNote.choose_note, AuthorisationFilter())
 async def choose_note_for_link(message: types.Message, state: FSMContext):
     send_json = {'request_text': message.text}
 

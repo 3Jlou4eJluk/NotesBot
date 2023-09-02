@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+    telegram_bot:
+        build:
+            ./app/telegram_bot/
+        depends_on:
+            - ml_server
+
+    ml_server:
+        build:
+            ./app/ml_server/
+        ports:
+            - 8000:8000

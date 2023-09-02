@@ -11,6 +11,7 @@ from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import Message, ReplyKeyboardRemove
 from bot_settings import ml_api_link
 
+from filters.authorization_filter import AuthorisationFilter
 
 
 class DeleteNote(StatesGroup):
@@ -20,12 +21,12 @@ class DeleteNote(StatesGroup):
 
 delete_router = Router()
 
-@delete_router.message(F.text.regexp(r'Удалить заметку'), State(None))
+@delete_router.message(F.text.regexp(r'Удалить заметку'), State(None), AuthorisationFilter())
 async def delete_note_command(message: types.Message, state: FSMContext):
     await state.set_state(DeleteNote.enter_query_state)
     await message.reply('А теперь, введи имя заметки:')
 
-@delete_router.message(F.text, DeleteNote.enter_query_state)
+@delete_router.message(F.text, DeleteNote.enter_query_state, AuthorisationFilter())
 async def enter_note_to_delete(message: types.Message, state: FSMContext):
     send_json = {'request_text': message.text}
 

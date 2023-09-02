@@ -10,6 +10,9 @@ from aiogram.types import Message, ReplyKeyboardRemove
 from bot_settings import ml_api_link
 
 
+from filters.authorization_filter import AuthorisationFilter
+
+
 import aiohttp
 import base64
 
@@ -31,19 +34,19 @@ async def get_request(url):
 
 add_note_router = Router()
 
-@add_note_router.message(F.text.regexp(r'Добавить заметку'), State(None))
+@add_note_router.message(F.text.regexp(r'Добавить заметку'), State(None), AuthorisationFilter())
 async def add_note(message :types.Message, state: FSMContext):
     await message.answer('Введи имя заметки')
     await state.set_state(AddNote.enter_name)
 
 
-@add_note_router.message(AddNote.enter_name, F.text)
+@add_note_router.message(AddNote.enter_name, F.text, AuthorisationFilter())
 async def add_note_enter_name(message: types.Message, state: FSMContext):
     await state.update_data(note_name=message.text)
     await message.answer('Хорошо, теперь давай введём текст твоей заметки')
     await state.set_state(AddNote.enter_text)
 
-@add_note_router.message(AddNote.enter_text, F.text)
+@add_note_router.message(AddNote.enter_text, F.text, AuthorisationFilter())
 async def add_note_enter_text(message: types.Message, state: FSMContext):
     note_name_dict = await state.get_data()
     note_name = note_name_dict['note_name']
@@ -64,7 +67,7 @@ async def add_note_enter_text(message: types.Message, state: FSMContext):
     await state.clear()
 
 
-@add_note_router.message(Command('get_picture'))
+@add_note_router.message(Command('get_picture'), AuthorisationFilter())
 async def get_picture(message :types.Message, command :CommandObject):
     if command.args:
         await message.answer('Функция не реализована')

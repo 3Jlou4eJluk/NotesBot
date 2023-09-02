@@ -13,6 +13,8 @@ from aiogram.utils.keyboard import InlineKeyboardMarkup
 from service_funcs import process_error
 from service_funcs import get_server_status
 
+from filters.authorization_filter import AuthorisationFilter
+
 import aiohttp
 import base64
 
@@ -23,14 +25,14 @@ class SearchNote(StatesGroup):
 search_notes_router = Router()
 
 
-@search_notes_router.message(F.text.regexp(r'Показать заметки'), State(None))
+@search_notes_router.message(F.text.regexp(r'Показать заметки'), State(None), AuthorisationFilter())
 async def show_notes(message: types.Message, state: FSMContext):
 
     await message.answer('Вот список заметок')
 
 
 
-@search_notes_router.message(F.text.regexp(r'Смысловой поиск'), State(None))
+@search_notes_router.message(AuthorisationFilter(), State(None), F.text.regexp(r'Смысловой поиск'))
 async def search_note(message: types.Message, state: FSMContext):
     but1 = types.InlineKeyboardButton(text='По названию', 
                                       callback_data='choose_method_name')
@@ -59,7 +61,7 @@ async def choose_search_method_text(callback: types.CallbackQuery, state: FSMCon
 
 
 
-@search_notes_router.message(F.text, SearchNote.enter_query)
+@search_notes_router.message(F.text, SearchNote.enter_query, AuthorisationFilter())
 async def process_search_query(message: types.Message, state: FSMContext):
     search_type_dict = await state.get_data()
     send_json = {'request_text': message.text}
@@ -80,7 +82,7 @@ async def process_search_query(message: types.Message, state: FSMContext):
 
 
 
-@search_notes_router.message(Command('get_note_by_id'))
+@search_notes_router.message(Command('get_note_by_id'), AuthorisationFilter())
 async def get_note_by_id(message: types.Message, command: CommandObject, state: FSMContext):
     if command.args:
         note_id_to_search = None
@@ -122,7 +124,7 @@ async def get_note_by_id(message: types.Message, command: CommandObject, state: 
         await message.answer("Не указан id заметки")
 
 
-@search_notes_router.message(Command('get_k_nearest_notes'))
+@search_notes_router.message(Command('get_k_nearest_notes'), AuthorisationFilter())
 async def get_k_nearest_notes(message: types.Message, command: CommandObject):
     if command.args:
         note_id = None
@@ -150,3 +152,4 @@ async def get_k_nearest_notes(message: types.Message, command: CommandObject):
 
     else:
         await message.answer("Не указан id заметки")
+
