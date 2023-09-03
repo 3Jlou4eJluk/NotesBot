@@ -127,6 +127,21 @@ async def search_note_by_name(search_note_req: SearchNoteRequest):
         'note_id' : str(note_id)
     }
 
+@ml_api.get('/ml_api/get_notes_list', response_model=GetNotesListReturn)
+async def get_notes_list(req: GetNotesListReq):
+    global db_obj
+    page_num = req.page_num
+    notes_per_page = req.notes_per_page
+    notes_data_dict, pages_count = db_obj.get_notes_list(page_num=page_num, notes_per_page=notes_per_page)
+    ret_struct = GetNotesListReturn(
+        note_id = notes_data_dict['note_id'],
+        note_name = notes_data_dict['note_name'],
+        note_text=notes_data_dict['note_text'],
+        note_date=notes_data_dict['note_date'],
+        pages_count=pages_count
+    )
+    return ret_struct
+
 @ml_api.get('/ml_api/search_note_by_text')
 async def search_note_by_name(search_note_req: SearchNoteRequest):
     global db_obj
@@ -189,19 +204,6 @@ async def erase_db():
     global db_obj
 
 
-@ml_api.get('ml_api/get_notes_list', response_model=GetNotesListReturn)
-async def get_notes_list(req: GetNotesListReq):
-    global db_obj
-    page_num = req.page_num
-    notes_per_page = req.notes_per_page
-    notes_data_dict, pages_count = db_obj.get_notes_list(page_num=page_num, notes_per_page=notes_per_page)
-    ret_struct = GetNotesListReturn(
-        note_id = notes_data_dict['note_id'],
-        note_name = notes_data_dict['note_name'],
-        note_text=notes_data_dict['note_text'],
-        note_date=notes_data_dict['note_date'],
-        pages_count=pages_count
-    )
-    return ret_struct
+
 
 
