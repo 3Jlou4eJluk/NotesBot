@@ -1,10 +1,12 @@
 from aiogram import types
 from aiogram.filters import Filter
-
+from bot_settings import white_list
+from bot_settings import admin_list
 
 class AuthorisationFilter(Filter):
     def __init__(self) -> None:
-        self.white_list = [6280571470, 900876379, 981215098,]
+        global white_list
+        self.white_list = white_list
     
     async def __call__(self, message: types.Message) -> bool:
         filter_result = message.from_user.id in self.white_list
@@ -15,7 +17,8 @@ class AuthorisationFilter(Filter):
 
 class AdministratorFilter(Filter):
     def __init__(self) -> None:
-        self.admin_list = [6280571470, ]
+        global admin_list
+        self.admin_list = admin_list
 
     async def __call__(self, message: types.Message) -> bool:
         filter_result = message.from_user.id in self.admin_list
