@@ -208,3 +208,24 @@ class DataBase:
         self.reduced_repr = None
         self.auto_sync_flag = True
         self.low_dim_repr_df = None
+    
+    def get_notes_list(self, page_num, notes_per_page=5):
+        sorted_notes = self.embeddings_df.sort_values(by='note_id')
+        pages_count = (self.embeddings_df.shape[0] - 1) / notes_per_page + 1
+        if page_num >= pages_count:
+            return [], pages_count
+        offset = page_num * notes_per_page
+        needed_slice = sorted_notes[offset:min(offset + notes_per_page, self.embeddings_df.shape[0])]
+        ret_struct = {
+            'note_id': [],
+            'note_name': [],
+            'note_text': [],
+            'note_date': []
+        }
+        for note_row in range(needed_slice.shape[0]):
+            row = needed_slice.iloc[note_row]
+            ret_struct['note_id'].append(row['note_id'])
+            ret_struct['note_name'].append(row['note_name'])
+            ret_struct['note_text'].append(row['note_text'])
+            ret_struct['note_date'].append(row['note_date'])
+        return ret_struct, pages_count

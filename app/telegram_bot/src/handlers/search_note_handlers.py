@@ -8,10 +8,13 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.types import Message, ReplyKeyboardRemove
 from bot_settings import ml_api_link
+from bot_settings import note_page_count
 from aiogram.utils.keyboard import InlineKeyboardMarkup
 
 from service_funcs import process_error
 from service_funcs import get_server_status
+from service_funcs import get_notes_list
+from service_funcs import answer_with_notes_list
 
 from filters.authorization_filter import AuthorisationFilter
 
@@ -21,6 +24,9 @@ import base64
 class SearchNote(StatesGroup):
     choose_method_state = State()
     enter_query = State()
+
+class GetNotesListStates(StatesGroup):
+    choose_page_state = State()
 
 search_notes_router = Router()
 
@@ -153,3 +159,23 @@ async def get_k_nearest_notes(message: types.Message, command: CommandObject):
     else:
         await message.answer("Не указан id заметки")
 
+@search_notes_router.message(F.text.regexp(r'Показать все заметки'))
+async def get_all_notes_handler(message: types.Message, state: FSMContext):
+    note_id_list, note_name_list, note_text_list, note_date_list, note_pages = await get_notes_list(0, note_page_count)
+
+    await message.answer('Привет, всего страниц: ' + str(note_pages) + '\n' + 'Печатаю первую страницу')
+    await answer_with_notes_list(message, note_id_list, note_name_list, note_text_list, note_date_list)
+    await message.answer('Введите номер страницы для отображения')
+    await state.set_state(GetNotesListStates.choose_page_state)
+
+@search_notes_router.message(F.text, GetNotesListStates.choose_page_state)
+async def get_all_notes_print_page(message: types.Message):
+    try:
+        page = int(message.text)
+    except:
+        message.answer('Некорректный номер страницы')
+        return None
+    
+    note_id_list, note_name_list, note_text_list, note_date_list, note_pages = await get_notes_list(page, note_page_count)
+    await message.answer('Страница номер {}/{}'.format(page, note_pages))
+    await answer_with_notes_list(message, note_id_list, note_name_list, note_text_list, note_date_list)

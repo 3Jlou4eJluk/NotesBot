@@ -81,3 +81,30 @@ async def send_delete_db_request():
     await session.close()
 
     return resp_status
+
+
+async def get_notes_list(page: int, notes_per_page: int):
+    async with aiohttp.ClientSession() as session:
+        send_json = {
+            'page_num': page,
+            'notes_per_page': notes_per_page
+            }
+        response = await session.get(ml_api_link + '/' + 'get_notes_list', json=send_json)
+        resp_status = response.status
+        resp_json = await response.json()
+    await session.close()
+
+
+    if resp_status == 200:
+        return resp_json['note_id'], resp_json['note_name'], resp_json['note_text'], resp_json['note_date'], resp_json['pages_count']
+    else:
+        return [], [], [], [], 0
+
+async def answer_with_notes_list(message, note_id_l, note_name_l, note_text_l, note_date_l):
+    if note_id_l.__len__() == 0:
+        await message.answer('Заметок нет')
+    for i in range(len(note_id_l)):
+        await message.answer('Note id:\n{}\n\n'.format(note_id_l[i]) +\
+                             'Имя заметки:\n{}\n\n'.format(note_name_l[i]) +\
+                             'Дата добавления заметки:\n{}\n\n'.format(note_date_l[i]) +\
+                             'Текст добавления заметки:\n{}\n\n'.format(note_text_l[i]))

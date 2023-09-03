@@ -55,11 +55,12 @@ async def update_page(message: types.Message):
 
     elif current_page == 1:
         
-        show_notes_list = types.KeyboardButton(text='Показать список заметок')
+        show_notes_list = types.KeyboardButton(text='Показать все заметки')
         prev_button = types.KeyboardButton(text='Пред. страница')
         next_button = types.KeyboardButton(text='След. страница')
         get_plot_button = types.KeyboardButton(text='Получить изображение', callback_data='/get_plot')
         keyb = types.ReplyKeyboardMarkup(resize_keyboard=True, keyboard=[[get_plot_button],
+                                                                         [show_notes_list],
                                                                          [prev_button, next_button]])
         await message.answer('Страница 2', reply_markup=keyb)
     elif current_page > 1:

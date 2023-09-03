@@ -28,3 +28,6 @@ class GetSegmentOfNotes(pydantic.BaseModel):
     k: int
     seg_num: int
 
+class GetNotesListReq(pydantic.BaseModel):
+    page_num: int
+    notes_per_page: int

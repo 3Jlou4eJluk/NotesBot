@@ -19,9 +19,11 @@ from request_data_structures import SearchNoteRequest
 from request_data_structures import GetNoteByIdRequest
 from request_data_structures import GetKNearestNotesRequest
 from request_data_structures import GetSegmentOfNotes
+from request_data_structures import GetNotesListReq
 
 from return_data_structures import GetKNearestNotesReturn
 from request_data_structures import CreateLinkRequest
+from return_data_structures import GetNotesListReturn
 
 from fastapi.responses import JSONResponse
 
@@ -34,10 +36,9 @@ from sentence_transformers import SentenceTransformer
 
 
 
-# some preprocessing actions
 ml_api = fastapi.FastAPI()
 
-
+# some preprocessing actions
 db_obj = DataBase()
 
 @ml_api.get("/")
@@ -186,4 +187,21 @@ async def get_status():
 @ml_api.get('ml_api/erase_db')
 async def erase_db():
     global db_obj
-    
+
+
+@ml_api.get('ml_api/get_notes_list', response_model=GetNotesListReturn)
+async def get_notes_list(req: GetNotesListReq):
+    global db_obj
+    page_num = req.page_num
+    notes_per_page = req.notes_per_page
+    notes_data_dict, pages_count = db_obj.get_notes_list(page_num=page_num, notes_per_page=notes_per_page)
+    ret_struct = GetNotesListReturn(
+        note_id = notes_data_dict['note_id'],
+        note_name = notes_data_dict['note_name'],
+        note_text=notes_data_dict['note_text'],
+        note_date=notes_data_dict['note_date'],
+        pages_count=pages_count
+    )
+    return ret_struct
+
+
